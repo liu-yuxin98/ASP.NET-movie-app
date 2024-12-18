@@ -24,15 +24,11 @@ namespace MovieApp
             app.MapGet("Movies", () => movies);
 
             // GET /movies/1
-            app.MapGet("Movies/{id}",(int id) => movies.Find(m=>m.Id==id)).WithName(getMovieEndPoint);
-
-
-            // update existing one
-            //app.MapPut("Movies/{id}", (MovieDto movie) =>
-            //{
-            //    movies[movie.Id] = movie; 
-            //    return 
-            //})
+            app.MapGet("Movies/{id}",(int id) =>
+            {
+                MovieDto? movieDto = movies.Find(x => x.Id == id);
+                return movieDto is null ? Results.NotFound() : Results.Ok(movieDto);
+            }).WithName(getMovieEndPoint);
 
 
             // POST /Movies create a new movie
@@ -54,6 +50,10 @@ namespace MovieApp
             app.MapPut("Movies/{id}", (int id,UpdateMovieDto updateMovieDto) =>
             {
                 int index = movies.FindIndex(m=>m.Id == id);
+                if (index == -1) { 
+                return Results.NotFound();
+                }
+
                 movies[index] = new MovieDto(
                     index+1,
                     updateMovieDto.Title,
