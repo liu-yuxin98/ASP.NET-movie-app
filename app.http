@@ -2,7 +2,7 @@
 GET http://localhost:5264/Movies
 
 ###
-GET http://localhost:5264/Movies/1
+GET http://localhost:5264/Movies/7
 
 
 ###
@@ -13,23 +13,23 @@ Content-Type: application/json
 
 {
   "title": "12 Angry Men",
-  "genre": "Crime",
+  "GenreId": 2,
   "director": "Sidney Lumet",
-  "ticketPrice": 1114.5,
+  "ticketPrice": 44.5,
   "releaseDate": "1957-04-10"
 }
 
 ###
-Put http://localhost:5264/Movies/1
+Put http://localhost:5264/Movies/7
 Content-Type: application/json
 
 {
   "title": "12 Angry Men",
-  "genre": "Crime",
+  "GenreId": 2,
   "director": "Sidney Lumet",
-  "ticketPrice": 11214.5,
+  "ticketPrice": 24.5,
   "releaseDate": "1957-04-10"
 }
 
 ###
-Delete http://localhost:5264/Movies/1
+DELETE http://localhost:5264/Movies/1

@@ -1,4 +1,8 @@
 ﻿using MovieApp.Dtos;
+using MovieApp.Data;
+using MovieApp.Entities;
+using MovieApp.Mapping;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieApp.EndPoints
 {
@@ -6,11 +10,11 @@ namespace MovieApp.EndPoints
     {
 
         const string getMovieEndPoint = "GetMovie";
-        private static List<MovieDto> movies = [
-            new MovieDto(1,"The Shawshank Redemption", "Drama","Frank Darabont",14.5M, new DateOnly(1994,10,14)),
-                new MovieDto(2,"The Godfather", "Crime", "Francis Ford Coppola",8.6M, new DateOnly(1972,4,24)),
-                new MovieDto(3,"The Dark Knight", "Action", "Christopher Nolan", 25.5M, new DateOnly(2008,7,18))
-       ];
+       // private static List<MovieSummaryDto> movies = [
+       //     new MovieSummaryDto(1,"The Shawshank Redemption", "Drama","Frank Darabont",14.5M, new DateOnly(1994,10,14)),
+       //         new MovieSummaryDto(2,"The Godfather", "Crime", "Francis Ford Coppola",8.6M, new DateOnly(1972,4,24)),
+       //         new MovieSummaryDto(3,"The Dark Knight", "Action", "Christopher Nolan", 25.5M, new DateOnly(2008,7,18))
+       //];
 
 
         public static RouteGroupBuilder MapMoviesEndPoints(this WebApplication app)
@@ -19,57 +23,59 @@ namespace MovieApp.EndPoints
             var group = app.MapGroup("Movies")
                             .WithParameterValidation();
             // GET /movies all data
-            group.MapGet("/", () => movies);
+            group.MapGet("/", (MovieContext movieContext) => 
+            movieContext.Movies
+            .Include(movie => movie.Genre)
+            .Select(movie => movie.MapToMovieSummaryDto())
+            .AsNoTracking()
+            );
 
             // GET /movies/1
-            group.MapGet("/{id}", (int id) =>
+            group.MapGet("/{id}", (int id, MovieContext movieContext) =>
             {
-                MovieDto? movieDto = movies.Find(x => x.Id == id);
-                return movieDto is null ? Results.NotFound() : Results.Ok(movieDto);
+                Movie? movie = movieContext.Movies.Find(id);
+
+
+                // map back to movieDto
+                return movie is null ? Results.NotFound() : Results.Ok(movie.MapToMovieDetailsDto());
             }).WithName(getMovieEndPoint);
 
 
             // POST /Movies create a new movie
-            group.MapPost("/", (CreateMovieDto createMovieDto) =>
+            group.MapPost("/", (CreateMovieDto createMovieDto, MovieContext movieContext) =>
             {
-                MovieDto movieDto = new MovieDto(
-                    movies.Count + 1,
-                    createMovieDto.Title,
-                    createMovieDto.Genre,
-                    createMovieDto.Director,
-                    createMovieDto.TicketPrice,
-                    createMovieDto.ReleaseDate
-                    );
-                movies.Add(movieDto);
-                return Results.CreatedAtRoute(getMovieEndPoint, new { id = movieDto.Id }, movieDto);
+
+                Movie movie = createMovieDto.ToEntity(movieContext.Movies.Count() + 1);
+                movie.Genre = movieContext.Genres.Find(movie.GenreId);
+                movieContext.Movies.Add(movie);
+                movieContext.SaveChanges();
+
+                return Results.CreatedAtRoute(getMovieEndPoint, new { id = movie.Id }, movie.MapToMovieSummaryDto());
             });
 
             //PUT /Movies/1 update a movie
-            group.MapPut("/{id}", (int id, UpdateMovieDto updateMovieDto) =>
+            group.MapPut("/{id}", (int id, UpdateMovieDto updateMovieDto, MovieContext movieContext) =>
             {
-                int index = movies.FindIndex(m => m.Id == id);
-                if (index == -1)
+                var existingMovie = movieContext.Movies.Find(id);
+                if (existingMovie is null)
                 {
                     return Results.NotFound();
                 }
 
-                movies[index] = new MovieDto(
-                    index + 1,
-                    updateMovieDto.Title,
-                    updateMovieDto.Genre,
-                    updateMovieDto.Director,
-                    updateMovieDto.TicketPrice,
-                    updateMovieDto.ReleaseDate
-                    );
+                movieContext.Entry(existingMovie).CurrentValues.SetValues( updateMovieDto.ToEntity(id)
+                );
+                movieContext.SaveChanges();
 
                 return Results.NoContent();
             });
 
             //DELETE /Movies/1 delete a movie
-            group.MapDelete("/{id}", (int id) =>
+            group.MapDelete("/{id}", (int id, MovieContext movieContext) =>
             {
 
-                movies.RemoveAll(m => m.Id == id);
+                movieContext.Movies
+                .Where(movie => movie.Id == id)
+                .ExecuteDelete();
 
                 return Results.NoContent();
             });

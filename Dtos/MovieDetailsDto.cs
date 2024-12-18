@@ -3,13 +3,13 @@
 namespace MovieApp.Dtos
 {
     // record is mainly used to store data
-    public record class MovieDto(
+    public record class MovieDetailsDto(
         int Id,
         string Title,
-        string Genre,
+        int GenreId,
         string Director,
         decimal TicketPrice,
         DateOnly ReleaseDate
-        );
+    );
 
 }
