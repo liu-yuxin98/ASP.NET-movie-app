@@ -15,7 +15,7 @@ Content-Type: application/json
   "title": "12 Angry Men",
   "genre": "Crime",
   "director": "Sidney Lumet",
-  "ticketPrice": 4.5,
+  "ticketPrice": 1114.5,
   "releaseDate": "1957-04-10"
 }
 
@@ -27,7 +27,7 @@ Content-Type: application/json
   "title": "12 Angry Men",
   "genre": "Crime",
   "director": "Sidney Lumet",
-  "ticketPrice": 4.5,
+  "ticketPrice": 11214.5,
   "releaseDate": "1957-04-10"
 }
 

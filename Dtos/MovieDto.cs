@@ -1,4 +1,6 @@
-﻿namespace MovieApp.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MovieApp.Dtos
 {
     // record is mainly used to store data
     public record class MovieDto(
@@ -6,7 +8,7 @@
         string Title,
         string Genre,
         string Director,
-        double TicketPrice,
+        decimal TicketPrice,
         DateOnly ReleaseDate
         );
 

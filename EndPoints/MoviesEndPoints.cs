@@ -7,16 +7,17 @@ namespace MovieApp.EndPoints
 
         const string getMovieEndPoint = "GetMovie";
         private static List<MovieDto> movies = [
-            new MovieDto(1,"The Shawshank Redemption", "Drama","Frank Darabont",14.5, new DateOnly(1994,10,14)),
-                new MovieDto(2,"The Godfather", "Crime", "Francis Ford Coppola",8.6, new DateOnly(1972,4,24)),
-                new MovieDto(3,"The Dark Knight", "Action", "Christopher Nolan", 25.5, new DateOnly(2008,7,18))
+            new MovieDto(1,"The Shawshank Redemption", "Drama","Frank Darabont",14.5M, new DateOnly(1994,10,14)),
+                new MovieDto(2,"The Godfather", "Crime", "Francis Ford Coppola",8.6M, new DateOnly(1972,4,24)),
+                new MovieDto(3,"The Dark Knight", "Action", "Christopher Nolan", 25.5M, new DateOnly(2008,7,18))
        ];
 
 
         public static RouteGroupBuilder MapMoviesEndPoints(this WebApplication app)
         {
 
-            var group = app.MapGroup("Movies");
+            var group = app.MapGroup("Movies")
+                            .WithParameterValidation();
             // GET /movies all data
             group.MapGet("/", () => movies);
 

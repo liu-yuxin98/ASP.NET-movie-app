@@ -1,10 +1,12 @@
-﻿namespace MovieApp.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MovieApp.Dtos
 {
     public record class CreateMovieDto(
-        string Title,
-        string Genre,
+        [Required][StringLength(100)] string Title,
+        [Required][StringLength(50)] string Genre,
         string Director,
-        double TicketPrice,
+        [Range(0, 200)] decimal TicketPrice,
         DateOnly ReleaseDate
         );
 }
