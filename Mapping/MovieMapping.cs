@@ -6,7 +6,19 @@ namespace MovieApp.Mapping
 {
     public static class MovieMapping
     {
+        public static Movie ToEntity(this CreateMovieDto createMovieDto)
+        {
+            return new Movie
+            {
+                Title = createMovieDto.Title,
+                GenreId = createMovieDto.GenreId,
+                Director = createMovieDto.Director,
+                TicketPrice = createMovieDto.TicketPrice,
+                ReleaseDate = createMovieDto.ReleaseDate,
 
+            };
+
+        }
 
         public static Movie ToEntity(this UpdateMovieDto updateMovieDto, int id)
         {
@@ -21,21 +33,6 @@ namespace MovieApp.Mapping
             };
         }
 
-
-        public static Movie ToEntity(this CreateMovieDto createMovieDto, int id)
-        {
-           return new Movie
-            {
-                Id = id,
-                Title = createMovieDto.Title,
-                GenreId = createMovieDto.GenreId,
-                Director = createMovieDto.Director,
-                TicketPrice = createMovieDto.TicketPrice,
-                ReleaseDate = createMovieDto.ReleaseDate,
-
-            };
-
-        }
 
         // map Movie to MovieSummaryDto
         public static MovieSummaryDto MapToMovieSummaryDto(this Movie movie)

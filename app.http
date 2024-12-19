@@ -1,12 +1,38 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
 GET http://localhost:5264/Movies
 
-###
-GET http://localhost:5264/Movies/7
-
 
 ###
-GET http://localhost:5264/Movies/4
+GET http://localhost:5264/genres
+
+###
+GET http://localhost:5264/Movies/13
+
+###
+POST http://localhost:5264/Movies
+Content-Type: application/json
+
+{
+  "title": "The Shawshank Redemption",
+  "GenreId": 1,
+  "director": "Frank Darabont",
+  "ticketPrice": 24.5,
+  "releaseDate": "1994-10-14"
+}
+
+###
+POST http://localhost:5264/Movies
+Content-Type: application/json
+
+{
+  "title": "The Godfather",
+  "GenreId": 2,
+  "director": "Francis Ford Coppola",
+  "ticketPrice": 14.5,
+  "releaseDate": "1972-04-24"
+}
+
+
 ###
 POST http://localhost:5264/Movies
 Content-Type: application/json
@@ -15,21 +41,22 @@ Content-Type: application/json
   "title": "12 Angry Men",
   "GenreId": 2,
   "director": "Sidney Lumet",
-  "ticketPrice": 44.5,
+  "ticketPrice": 48.5,
   "releaseDate": "1957-04-10"
 }
 
 ###
-Put http://localhost:5264/Movies/7
+Put http://localhost:5264/Movies/16
 Content-Type: application/json
 
 {
   "title": "12 Angry Men",
   "GenreId": 2,
   "director": "Sidney Lumet",
-  "ticketPrice": 24.5,
+  "ticketPrice": 4.5,
   "releaseDate": "1957-04-10"
 }
 
 ###
-DELETE http://localhost:5264/Movies/1
+DELETE http://localhost:5264/Movies/15
+

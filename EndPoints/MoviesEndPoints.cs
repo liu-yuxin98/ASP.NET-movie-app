@@ -23,17 +23,18 @@ namespace MovieApp.EndPoints
             var group = app.MapGroup("Movies")
                             .WithParameterValidation();
             // GET /movies all data
-            group.MapGet("/", (MovieContext movieContext) => 
-            movieContext.Movies
-            .Include(movie => movie.Genre)
-            .Select(movie => movie.MapToMovieSummaryDto())
-            .AsNoTracking()
+            group.MapGet("/", async (MovieContext movieContext) => 
+            await movieContext.Movies
+                    .Include(movie => movie.Genre)
+                    .Select(movie => movie.MapToMovieSummaryDto())
+                    .AsNoTracking()
+                    .ToListAsync()
             );
 
             // GET /movies/1
-            group.MapGet("/{id}", (int id, MovieContext movieContext) =>
+            group.MapGet("/{id}", async (int id, MovieContext movieContext) =>
             {
-                Movie? movie = movieContext.Movies.Find(id);
+                Movie? movie = await movieContext.Movies.FindAsync(id);
 
 
                 // map back to movieDto
@@ -42,21 +43,23 @@ namespace MovieApp.EndPoints
 
 
             // POST /Movies create a new movie
-            group.MapPost("/", (CreateMovieDto createMovieDto, MovieContext movieContext) =>
+            group.MapPost("/", async (CreateMovieDto createMovieDto, MovieContext movieContext) =>
             {
 
-                Movie movie = createMovieDto.ToEntity(movieContext.Movies.Count() + 1);
-                movie.Genre = movieContext.Genres.Find(movie.GenreId);
+                Movie movie = createMovieDto.ToEntity();
                 movieContext.Movies.Add(movie);
-                movieContext.SaveChanges();
+                await movieContext.SaveChangesAsync();
 
-                return Results.CreatedAtRoute(getMovieEndPoint, new { id = movie.Id }, movie.MapToMovieSummaryDto());
+                return Results.CreatedAtRoute(
+                    getMovieEndPoint, 
+                    new { id = movie.Id }, 
+                    movie.MapToMovieDetailsDto());
             });
 
             //PUT /Movies/1 update a movie
-            group.MapPut("/{id}", (int id, UpdateMovieDto updateMovieDto, MovieContext movieContext) =>
+            group.MapPut("/{id}",async (int id, UpdateMovieDto updateMovieDto, MovieContext movieContext) =>
             {
-                var existingMovie = movieContext.Movies.Find(id);
+                var existingMovie = await movieContext.Movies.FindAsync(id);
                 if (existingMovie is null)
                 {
                     return Results.NotFound();
@@ -64,18 +67,18 @@ namespace MovieApp.EndPoints
 
                 movieContext.Entry(existingMovie).CurrentValues.SetValues( updateMovieDto.ToEntity(id)
                 );
-                movieContext.SaveChanges();
+                await movieContext.SaveChangesAsync();
 
                 return Results.NoContent();
             });
 
             //DELETE /Movies/1 delete a movie
-            group.MapDelete("/{id}", (int id, MovieContext movieContext) =>
+            group.MapDelete("/{id}", async (int id, MovieContext movieContext) =>
             {
 
-                movieContext.Movies
-                .Where(movie => movie.Id == id)
-                .ExecuteDelete();
+                await movieContext.Movies
+                        .Where(movie => movie.Id == id)
+                        .ExecuteDeleteAsync();
 
                 return Results.NoContent();
             });
