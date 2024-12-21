@@ -1,0 +1,57 @@
+﻿@page "/" 
+@using Models
+
+<PageTitle>Movie Catalog</PageTitle>
+
+<table>
+    <thead>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Genre</th>
+        <th>Director</th>
+        <th>TicketPrice</th>
+        <th>ReleaseDate</th>
+        <th></th>
+    </thead>
+    <tbody>
+        @foreach(var movie in movies){
+            <tr>
+                <td>@movie.Id</td>
+                <td>@movie.Title</td>
+                <td>@movie.Genre</td>
+                <td>@movie.Director</td>
+                <td>@movie.TicketPrice</td>
+                <td>@movie.ReleaseDate</td>
+            </tr>
+
+        }
+
+    </tbody>
+</table>
+
+@code{
+    private MovieSummary[] movies = [
+               new(){
+           Id = 1,
+           Title = "The God Father",
+           Genre = "Crime",
+           Director = "Francis Ford Coppola",
+           TicketPrice = 14.5M,
+           ReleaseDate = new DateOnly(1972,04,24)
+            },
+
+       new(){
+           Id = 1,
+           Title = "The Shawshank Redemption",
+           Genre = "Drama",
+           Director = "Frank Darabont",
+           TicketPrice = 23M,
+           ReleaseDate = new DateOnly(1994,10,14)
+            }
+
+        ];
+
+    private string value = "hello world";
+
+
+}
