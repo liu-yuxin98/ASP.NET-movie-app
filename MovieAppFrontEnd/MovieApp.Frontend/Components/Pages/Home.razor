@@ -1,57 +1,50 @@
 ﻿@page "/" 
 @using Models
+@using Clients
 
 <PageTitle>Movie Catalog</PageTitle>
+@if(movies is null){
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover mt-4">
+        <thead class="table-dark">
+            <th>Id</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Director</th>
+            <th class="text-end">TicketPrice</th>
+            <th>ReleaseDate</th>
+            <th></th>
+        </thead>
+        <tbody>
+            @foreach(var movie in movies){
+                <tr>
+                    <td>@movie.Id</td>
+                    <td>@movie.Title</td>
+                    <td>@movie.Genre</td>
+                    <td>@movie.Director</td>
+                    <td class="text-end">@movie.TicketPrice.ToString("C2")</td>
+                    <td>@movie.ReleaseDate</td>
+                </tr>
 
-<table>
-    <thead>
-        <th>Id</th>
-        <th>Title</th>
-        <th>Genre</th>
-        <th>Director</th>
-        <th>TicketPrice</th>
-        <th>ReleaseDate</th>
-        <th></th>
-    </thead>
-    <tbody>
-        @foreach(var movie in movies){
-            <tr>
-                <td>@movie.Id</td>
-                <td>@movie.Title</td>
-                <td>@movie.Genre</td>
-                <td>@movie.Director</td>
-                <td>@movie.TicketPrice</td>
-                <td>@movie.ReleaseDate</td>
-            </tr>
-
-        }
-
-    </tbody>
-</table>
-
-@code{
-    private MovieSummary[] movies = [
-               new(){
-           Id = 1,
-           Title = "The God Father",
-           Genre = "Crime",
-           Director = "Francis Ford Coppola",
-           TicketPrice = 14.5M,
-           ReleaseDate = new DateOnly(1972,04,24)
-            },
-
-       new(){
-           Id = 1,
-           Title = "The Shawshank Redemption",
-           Genre = "Drama",
-           Director = "Frank Darabont",
-           TicketPrice = 23M,
-           ReleaseDate = new DateOnly(1994,10,14)
             }
 
-        ];
+        </tbody>
+    </table>
+}
+@code{
+    private MoviesClient moviesClient = new MoviesClient();
 
-    private string value = "hello world";
+    private MovieSummary[]? movies;
+
+    // this method will be executed after the component received parameters
+    protected override void OnInitialized()
+    {
+        movies = moviesClient.GetMovies();
+
+    }
 
 
 }
